@@ -1,4 +1,4 @@
-## Requirements
+## Requirements & How to use
 
 ### 1) Προσθήκη του παρακάτω κώδικα στο functions.php του theme
 function mytheme_enqueue_styles() {
