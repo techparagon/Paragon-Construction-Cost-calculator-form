@@ -1,0 +1,1120 @@
+<!-- Bootstrap JS and dependencies -->
+<script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.3/dist/umd/popper.min.js"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+<style>
+    .step {
+        display: none;
+    }
+
+    .step.active {
+        display: block;
+    }
+
+    .cost-notice {
+        max-width: 600px !important;
+        color: #000 !important;
+        font-style: italic;
+        font-size: 14px;
+        margin-top: 0.5em !important;
+    }
+
+    .cost-form-container {
+        max-width: 600px !important;
+        background-color: #FFCF01 !important;
+        padding: 40px !important;
+        border-radius: 5px !important;
+        color: #000 !important;
+        /*
+		margin-top: 5em !important;
+		margin-bottom: 5em !important;
+		*/
+    }
+
+    @media only screen and (max-width: 768px) {
+        .cost-form-container {
+            padding: 30px 25px 30px 25px !important;
+        }
+    }
+
+    .cost-form-container label {
+        font-size: 20px !important;
+        font-weight: 500 !important;
+        margin-bottom: 0.5em;
+        opacity: unset !important;
+    }
+
+    .cost-form-container .btn {
+        margin-top: 1em;
+    }
+
+    .cost-form-container p {
+        padding-top: 0.5em !important;
+        font-size: 18px !important;
+    }
+
+    .cost-form-container .mt-3 {
+        margin-top: 0px !important;
+        margin-bottom: 0.5em !important;
+    }
+
+    .cost-form-container select {
+        margin-top: 0.5em !important;
+    }
+
+    .cost-form-container input:not([type='checkbox']):not([type='radio']),
+    textarea,
+    select {
+        background: #fff !important;
+    }
+
+    .q8-guide-button {
+        background: transparent !important;
+        border: 0 !important;
+    }
+
+    #Modal-Q8-Center {
+        z-index: 99999 !important;
+    }
+</style>
+
+<div class="container cost-form-container">
+
+    <!-- Required to calculate the total cost - Dont delete -->
+    <div hidden>
+        <input type="text" id="totalCost" name="totalCost" value="1" readonly>
+    </div>
+
+    <!-- Modal Guide - Question 8 -->
+    <div class="modal fade modal-lg" id="Modal-Q8-Center" tabindex="-1" role="dialog"
+        aria-labelledby="Modal-Q8-CenterTitle" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title text-center" id="Modal-Q8-LongTitle">Πώς υπολογίζω τα τρέχοντα μέτρα</h5>
+                    <button type="button" class="close btn-close" data-dismiss="modal" aria-label="Close">
+                        <!--<span aria-hidden="true">&times;</span>-->
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <img src="/wp-content/uploads/2024/08/Q8-How-To-scaled.jpg" class="img-fluid">
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Question 1 -->
+    <div class="step active" id="step1">
+        <div class="form-group">
+            <label for="question1">1) Τι είδους ανακαίνιση επιθυμείς να κάνεις;</label>
+            <select id="question1Value" class="form-select">
+                <option value="0" selected disabled>Επιλογή</option>
+                <option value="1.2">Οικονομική</option>
+                <option value="1.4">Κανονική</option>
+                <option value="1.7">Πολυτελή</option>
+            </select>
+        </div>
+        <button type="button" class="btn btn-primary" id="next1" disabled>Επόμενο</button>
+        <div class="d-flex justify-content-end mt-3">
+            <span class="text-muted">Βήμα <b>1</b> από <b>11</b></span>
+        </div>
+    </div>
+
+    <!-- Question 2 -->
+    <div class="step" id="step2">
+        <div class="form-group">
+            <label for="question2">2) Πόσα τετραγωνικά είναι ο χώρος που θα ανακαινίσεις;</label>
+            <input type="number" class="form-control" id="question2" min="1" value="">
+        </div>
+        <button type="button" class="btn btn-secondary" id="back2">Πίσω</button>
+        <button type="button" class="btn btn-primary" id="next2" disabled>Επόμενο</button>
+        <div class="d-flex justify-content-end mt-3">
+            <span class="text-muted">Βήμα <b>2</b> από <b>11</b></span>
+        </div>
+    </div>
+
+    <!-- Question 3 -->
+    <div class="step" id="step3">
+        <div class="form-group">
+            <label for="question3">3) Σε ποιόν όροφο βρίσκεται;</label>
+            <input type="range" class="form-range" id="question3" min="0" max="10" value="0"
+                oninput="updateSliderValue(this.value)">
+            <p>Όροφος: <span id="sliderValue">Ισόγειο</span></p>
+        </div>
+        <button type="button" class="btn btn-secondary" id="back3">Πίσω</button>
+        <button type="button" class="btn btn-primary" id="next3">Επόμενο</button>
+        <div class="d-flex justify-content-end mt-3">
+            <span class="text-muted">Βήμα <b>3</b> από <b>11</b></span>
+        </div>
+    </div>
+
+    <!-- Question 4 -->
+    <div class="step" id="step4">
+        <div class="form-group">
+            <label for="question4">4) Θα γκρεμίσεις τοίχους;</label><br>
+            <div>
+                <div class="form-check ">
+                    <input class="form-check-input" type="radio" name="question4" id="question4-noOption" value="no"
+                        checked>
+                    <label class="form-check-label" for="question4-noOption">Όχι</label>
+                </div>
+                <div class="form-check ">
+                    <input class="form-check-input" type="radio" name="question4" id="question4-yesOption" value="yes">
+                    <label class="form-check-label" for="question4-yesOption">Ναι</label>
+                </div>
+            </div>
+            <div id="question4-walls" style="display: none;" class="mt-3">
+                <label for="question4-walls-input">Πόσους τοίχους:</label>
+                <input type="number" class="form-control" id="question4-walls-input" min="1" max="10" value="1">
+            </div>
+        </div>
+        <button type="button" class="btn btn-secondary" id="back4">Πίσω</button>
+        <button type="button" class="btn btn-primary" id="next4" disabled>Επόμενο</button>
+        <div class="d-flex justify-content-end mt-3">
+            <span class="text-muted">Βήμα <b>4</b> από <b>11</b></span>
+        </div>
+    </div>
+
+    <!-- Question 5 -->
+    <div class="step" id="step5">
+        <div class="form-group">
+            <label for="question5">5) Θα ανακαινίσεις ριζικά μπάνια;</label><br>
+            <div>
+                <div class="form-check ">
+                    <input class="form-check-input" type="radio" name="question5" id="question5-noOption" value="no"
+                        checked>
+                    <label class="form-check-label" for="question5-noOption">Όχι</label>
+                </div>
+                <div class="form-check ">
+                    <input class="form-check-input" type="radio" name="question5" id="question5-yesOption" value="yes">
+                    <label class="form-check-label" for="question5-yesOption">Ναι</label>
+                </div>
+            </div>
+
+            <div id="question5-bathroom" style="display: none;" class="mt-3">
+                <label for="question5-bathroom-input">Πόσα μπάνια:</label>
+                <input type="number" class="form-control" id="question5-bathroom-input" min="0" max="4" value="0">
+            </div>
+            <div id="question5-wc" style="display: none;" class="mt-3">
+                <label for="question5-wc-input">Πόσα WC:</label>
+                <input type="number" class="form-control" id="question5-wc-input" min="0" max="4" value="0">
+            </div>
+        </div>
+        <button type="button" class="btn btn-secondary" id="back5">Πίσω</button>
+        <button type="button" class="btn btn-primary" id="next5" disabled>Επόμενο</button>
+        <div class="d-flex justify-content-end mt-3">
+            <span class="text-muted">Βήμα <b>5</b> από <b>11</b></span>
+        </div>
+    </div>
+
+    <!-- Question 6 -->
+    <div class="step" id="step6">
+        <div class="form-group">
+            <label for="question6">6) Θα χτίσεις γυψοσανίδες;</label>
+            <div class="form-check">
+                <input class="form-check-input" type="checkbox" id="question6-option1" value="yes">
+                <label class="form-check-label" for="question6-option1">Ναι, τοίχο</label>
+            </div>
+            <div id="question6-inputField1" style="display: none;" class="mt-3">
+                <label for="question6-input1">Πόσους τοίχους:</label>
+                <input type="number" class="form-control" id="question6-input1" min="1" max="10" value="0">
+            </div>
+            <div class="form-check">
+                <input class="form-check-input" type="checkbox" id="question6-option2" value="yes2">
+                <label class="form-check-label" for="question6-option2">Ναι, ψευδοροφή</label>
+            </div>
+            <div id="question6-inputField2" style="display: none;" class="mt-3">
+                <select id="question6Value" class="form-select">
+                    <option value="0" selected>Επιλογή</option>
+                    <option value="22">Σε όλο το σπίτι</option>
+                    <option value="200">Στο μπάνιο μόνο</option>
+                </select>
+            </div>
+        </div>
+        <button type="button" class="btn btn-secondary" id="back6">Πίσω</button>
+        <button type="button" class="btn btn-primary" id="next6">Επόμενο</button>
+        <div class="d-flex justify-content-end mt-3">
+            <span class="text-muted">Βήμα <b>6</b> από <b>11</b></span>
+        </div>
+    </div>
+
+    <!-- Question 7 -->
+    <div class="step" id="step7">
+        <div class="form-group">
+            <label for="question7">7) Θα κάνεις νέα Ηλεκτρολογική Εγκατάσταση;</label><br>
+
+            <div id="question7-inputField" class="mt-3">
+                <select id="question7Value" class="form-select">
+                    <option value="150" selected>Όχι</option>
+                    <option value="50">Ολική</option>
+                    <option value="15">Μερική</option>
+                </select>
+
+            </div>
+
+        </div>
+        <button type="button" class="btn btn-secondary" id="back7">Πίσω</button>
+        <button type="button" class="btn btn-primary" id="next7">Επόμενο</button>
+        <div class="d-flex justify-content-end mt-3">
+            <span class="text-muted">Βήμα <b>7</b> από <b>11</b></span>
+        </div>
+    </div>
+
+    <!-- Question 8 -->
+    <div class="step" id="step8">
+        <div class="form-group">
+            <label for="question8">8) Θα ανακαινίσεις ριζικά την κουζίνα;</label>
+            <select id="question8Value" class="form-select">
+                <option value="0" selected>Όχι</option>
+                <option value="1">Ναι</option>
+                <option value="2">Μόνο τα ντουλάπια</option>
+            </select>
+        </div>
+        <div id="question8-input" style="display: none;" class="mt-3">
+            <label for="question8-current-measures">Πόσα Τρέχοντα Μέτρα:</label>
+            <input type="number" class="form-control" id="question8-current-measures" min="1" max="100" value="0">
+            <label for="question8-modal-guide">Δείτε πως υπολογίζονται πατώντας εδώ <button type="button"
+                    class="q8-guide-button" data-toggle="modal" data-target="#Modal-Q8-Center">
+                    <svg fill="#62bde4" version="1.1" id="Capa_1" xmlns="http://www.w3.org/2000/svg"
+                        xmlns:xlink="http://www.w3.org/1999/xlink" width="20px" height="20px"
+                        viewBox="0 0 416.979 416.979" xml:space="preserve" stroke="#62bde4">
+
+                        <g id="SVGRepo_bgCarrier" stroke-width="0" />
+
+                        <g id="SVGRepo_tracerCarrier" stroke-linecap="round" stroke-linejoin="round" />
+
+                        <g id="SVGRepo_iconCarrier">
+                            <g>
+                                <path
+                                    d="M356.004,61.156c-81.37-81.47-213.377-81.551-294.848-0.182c-81.47,81.371-81.552,213.379-0.181,294.85 c81.369,81.47,213.378,81.551,294.849,0.181C437.293,274.636,437.375,142.626,356.004,61.156z M237.6,340.786 c0,3.217-2.607,5.822-5.822,5.822h-46.576c-3.215,0-5.822-2.605-5.822-5.822V167.885c0-3.217,2.607-5.822,5.822-5.822h46.576 c3.215,0,5.822,2.604,5.822,5.822V340.786z M208.49,137.901c-18.618,0-33.766-15.146-33.766-33.765 c0-18.617,15.147-33.766,33.766-33.766c18.619,0,33.766,15.148,33.766,33.766C242.256,122.755,227.107,137.901,208.49,137.901z" />
+                            </g>
+                        </g>
+                    </svg>
+                </button></label>
+        </div>
+        <button type="button" class="btn btn-secondary" id="back8">Πίσω</button>
+        <button type="button" class="btn btn-primary" id="next8" disabled>Επόμενο</button>
+        <div class="d-flex justify-content-end mt-3">
+            <span class="text-muted">Βήμα <b>8</b> από <b>11</b></span>
+        </div>
+    </div>
+
+    <!-- Question 9 -->
+    <div class="step" id="step9">
+        <div class="form-group">
+            <label for="question9">9) Θα αλλάξεις δάπεδα;</label>
+            <select id="question9Value" class="form-select">
+                <option value="0" selected>Όχι</option>
+                <option value="1">Πλακάκια σε όλο το σπίτι</option>
+                <option value="2">Τρίψιμο πατωμάτων</option>
+                <option value="3">Πλακάκια και τρίψιμο</option>
+            </select>
+        </div>
+        <button type="button" class="btn btn-secondary" id="back9">Πίσω</button>
+        <button type="button" class="btn btn-primary" id="next9">Επόμενο</button>
+        <div class="d-flex justify-content-end mt-3">
+            <span class="text-muted">Βήμα <b>9</b> από <b>11</b></span>
+        </div>
+    </div>
+
+    <!-- Question 10 -->
+    <div class="step" id="step10">
+        <div class="form-group">
+            <label for="question10">10) Τι θα κάνεις με τις πόρτες και τα παράθυρα;</label>
+
+            <input type="range" class="form-range" id="question10_1" min="0" max="10" value="0"
+                oninput="Question10updateSliderValue(this.value)">
+            <p>Πόρτες Ασφαλείας: <span id="question10-sliderValue">0</span></p>
+
+            <input type="range" class="form-range" id="question10_2" min="0" max="10" value="0"
+                oninput="Question10updateSliderValue2(this.value)">
+            <p>Εσωτερικές Πόρτες: <span id="question10-sliderValue-2">0</span></p>
+
+            <input type="range" class="form-range" id="question10_3" min="0" max="10" value="0"
+                oninput="Question10updateSliderValue3(this.value)">
+            <p>Παράθυρα Αλουμινίου: <span id="question10-sliderValue-3">0</span></p>
+
+            <input type="range" class="form-range" id="question10_4" min="0" max="10" value="0"
+                oninput="Question10updateSliderValue4(this.value)">
+            <p>Μπαλκονόπορτες Αλουμινίου: <span id="question10-sliderValue-4">0</span></p>
+
+        </div>
+        <button type="button" class="btn btn-secondary" id="back10">Πίσω</button>
+        <button type="button" class="btn btn-primary" id="next10">Επόμενο</button>
+        <div class="d-flex justify-content-end mt-3">
+            <span class="text-muted">Βήμα <b>10</b> από <b>11</b></span>
+        </div>
+    </div>
+
+    <!-- Question 11 -->
+    <div class="step" id="step11">
+        <div class="form-group">
+            <label for="question11">11) Σχεδόν τελειώσαμε. Έμεινε το βάψιμο τώρα.</label>
+            <select id="question11Value" class="form-select">
+                <option value="0" selected>Όχι</option>
+                <option value="1">Ναι, εσωτερικά</option>
+                <option value="2">Εσωτερικά και Εξωτερικά</option>
+            </select>
+        </div>
+        <button type="button" class="btn btn-secondary" id="back11">Πίσω</button>
+        <button type="button" class="btn btn-primary" id="next11">Επόμενο</button>
+        <div class="d-flex justify-content-end mt-3">
+            <span class="text-muted">Βήμα <b>11</b> από <b>11</b></span>
+        </div>
+    </div>
+
+</div>
+
+<div class="container cost-notice">
+    <span class="text-muted">Οι τιμές είναι ενδεικτικές και αναφέρονται για ακίνητο στην Αττική για
+        το έτος 2024</span>
+</div>
+
+<script>
+    document.getElementById('next1').addEventListener('click', function () {
+        document.getElementById('step1').classList.remove('active');
+        document.getElementById('step2').classList.add('active');
+    });
+
+    document.getElementById('back2').addEventListener('click', function () {
+        document.getElementById('step2').classList.remove('active');
+        document.getElementById('step1').classList.add('active');
+    });
+
+    document.getElementById('next2').addEventListener('click', function () {
+        document.getElementById('step2').classList.remove('active');
+        document.getElementById('step3').classList.add('active');
+    });
+
+    document.getElementById('back3').addEventListener('click', function () {
+        document.getElementById('step3').classList.remove('active');
+        document.getElementById('step2').classList.add('active');
+    });
+
+    document.getElementById('next3').addEventListener('click', function () {
+        document.getElementById('step3').classList.remove('active');
+        document.getElementById('step4').classList.add('active');
+    });
+
+    document.getElementById('back4').addEventListener('click', function () {
+        document.getElementById('step4').classList.remove('active');
+        document.getElementById('step3').classList.add('active');
+    });
+
+    document.getElementById('next4').addEventListener('click', function () {
+        document.getElementById('step4').classList.remove('active');
+        document.getElementById('step5').classList.add('active');
+    });
+
+    document.getElementById('back5').addEventListener('click', function () {
+        document.getElementById('step5').classList.remove('active');
+        document.getElementById('step4').classList.add('active');
+    });
+
+    document.getElementById('next5').addEventListener('click', function () {
+        document.getElementById('step5').classList.remove('active');
+        document.getElementById('step6').classList.add('active');
+    });
+
+    document.getElementById('back6').addEventListener('click', function () {
+        document.getElementById('step6').classList.remove('active');
+        document.getElementById('step5').classList.add('active');
+    });
+
+    document.getElementById('next6').addEventListener('click', function () {
+        document.getElementById('step6').classList.remove('active');
+        document.getElementById('step7').classList.add('active');
+    });
+
+    document.getElementById('back7').addEventListener('click', function () {
+        document.getElementById('step7').classList.remove('active');
+        document.getElementById('step6').classList.add('active');
+    });
+
+    document.getElementById('next7').addEventListener('click', function () {
+        document.getElementById('step7').classList.remove('active');
+        document.getElementById('step8').classList.add('active');
+    });
+
+    document.getElementById('back8').addEventListener('click', function () {
+        document.getElementById('step8').classList.remove('active');
+        document.getElementById('step7').classList.add('active');
+    });
+
+    document.getElementById('next8').addEventListener('click', function () {
+        document.getElementById('step8').classList.remove('active');
+        document.getElementById('step9').classList.add('active');
+    });
+
+    document.getElementById('back9').addEventListener('click', function () {
+        document.getElementById('step9').classList.remove('active');
+        document.getElementById('step8').classList.add('active');
+    });
+
+    document.getElementById('next9').addEventListener('click', function () {
+        document.getElementById('step9').classList.remove('active');
+        document.getElementById('step10').classList.add('active');
+    });
+
+    document.getElementById('back10').addEventListener('click', function () {
+        document.getElementById('step10').classList.remove('active');
+        document.getElementById('step9').classList.add('active');
+    });
+
+    document.getElementById('next10').addEventListener('click', function () {
+        document.getElementById('step10').classList.remove('active');
+        document.getElementById('step11').classList.add('active');
+    });
+
+    document.getElementById('back11').addEventListener('click', function () {
+        document.getElementById('step11').classList.remove('active');
+        document.getElementById('step10').classList.add('active');
+    });
+
+    document.getElementById('next11').addEventListener('click', function () {
+        document.getElementById('step11').classList.remove('active');
+        document.getElementsByClassName("wpcf7")[0].style.display = "block";
+        document.getElementsByClassName("cost-form-container")[0].style.display = "none";
+        document.getElementsByClassName("cost-notice")[0].style.display = "none";
+
+    });
+
+
+    /*
+    * Question 3
+    */
+    function updateSliderValue(value) {
+        if (value == 0) {
+            document.getElementById('sliderValue').innerText = "Ισόγειο";
+        } else {
+            document.getElementById('sliderValue').innerText = value;
+        }
+    }
+    /*
+    * Question 3 END
+    */
+
+    /*
+    * Question 4 
+    */
+    document.getElementById('question4-yesOption').addEventListener('change', function () {
+        if (this.checked) {
+            document.getElementById('question4-walls').style.display = 'block';
+        }
+    });
+
+    document.getElementById('question4-noOption').addEventListener('change', function () {
+        if (this.checked) {
+            document.getElementById('question4-walls').style.display = 'none';
+        }
+    });
+    /*
+    * Question 4 END
+    */
+
+    /*
+    * Question 5 
+    */
+    document.getElementById('question5-yesOption').addEventListener('change', function () {
+        if (this.checked) {
+            document.getElementById('question5-bathroom').style.display = 'block';
+            document.getElementById('question5-wc').style.display = 'block';
+        }
+    });
+
+    document.getElementById('question5-noOption').addEventListener('change', function () {
+        if (this.checked) {
+            document.getElementById('question5-bathroom').style.display = 'none';
+            document.getElementById('question5-wc').style.display = 'none';
+        }
+    });
+
+    /*
+    * Question 5 END
+    */
+
+    /*
+     * Question 6 
+     */
+    document.getElementById('question6-option1').addEventListener('change', function () {
+        if (this.checked) {
+            document.getElementById('question6-inputField1').style.display = 'block';
+        } else {
+            document.getElementById('question6-inputField1').style.display = 'none';
+        }
+    });
+
+    document.getElementById('question6-option2').addEventListener('change', function () {
+        if (this.checked) {
+            document.getElementById('question6-inputField2').style.display = 'block';
+        } else {
+            document.getElementById('question6-inputField2').style.display = 'none';
+        }
+    });
+
+    /*
+    * Question 6 END
+    */
+
+    /*
+    * Question 8 
+    */
+    document.getElementById('question8Value').addEventListener('change', function () {
+        if (this.value === '1' || this.value === '2') {
+            document.getElementById('question8-input').style.display = 'block';
+        } else {
+            document.getElementById('question8-input').style.display = 'none';
+        }
+    });
+    /*
+    * Question 8 END
+    */
+
+    /*
+    * Question 10
+    */
+    function Question10updateSliderValue(value) {
+        document.getElementById('question10-sliderValue').innerText = value;
+    }
+    function Question10updateSliderValue2(value) {
+        document.getElementById('question10-sliderValue-2').innerText = value;
+    }
+    function Question10updateSliderValue3(value) {
+        document.getElementById('question10-sliderValue-3').innerText = value;
+    }
+    function Question10updateSliderValue4(value) {
+        document.getElementById('question10-sliderValue-4').innerText = value;
+    }
+    /*
+    * Question 10 END
+    */
+
+</script>
+
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+        //Initialize Values
+        const totalCost = document.getElementById("totalCost"); //Total cost
+
+        const question1 = document.getElementById("question1Value"); //Q1
+
+        const question2_square_metre = document.getElementById("question2"); //Q2
+
+        const question3 = document.getElementById("question3"); //Q2
+
+        const question4 = document.getElementById("question4-walls-input"); //Q4
+
+        const question5_1 = document.getElementById("question5-bathroom-input"); //Q5
+        const question5_2 = document.getElementById("question5-wc-input"); //Q5
+
+        const question6_1 = document.getElementById("question6-input1"); //Q6
+        const question6_2 = document.getElementById("question6Value"); //Q6
+
+        const question7 = document.getElementById("question7Value"); //Q7
+
+        const question8_1 = document.getElementById("question8Value"); //Q8
+        const question8_2 = document.getElementById("question8-current-measures"); //Q8
+
+        const question9 = document.getElementById("question9Value"); //Q9
+
+        const question10_1 = document.getElementById("question10_1"); //Q10
+        const question10_2 = document.getElementById("question10_2"); //Q10
+        const question10_3 = document.getElementById("question10_3"); //Q10
+        const question10_4 = document.getElementById("question10_4"); //Q10
+
+        const question11 = document.getElementById("question11Value"); //Q11
+
+
+        // Contact form values
+        const hiddenTotal = document.getElementById("form-total-cost");
+        const cf_question_1 = question1;
+        const cf_question_2 = question2_square_metre;
+        const cf_question_5 = document.getElementById('question5-yesOption');
+        const cf_question_6_checkbox_1 = document.getElementById('question6-option1');
+        const cf_question_6_checkbox_2 = document.getElementById('question6-option2');
+        const cf_question_6_2_select = question6_2;
+        const cf_question_7 = question7;
+        const cf_question_8 = question8_1;
+        const cf_question_9 = question9;
+        const cf_question_11 = question11;
+
+        function updateTotalCost() {
+            // contact form 
+            const cf_question_1_option = cf_question_1.options[cf_question_1.selectedIndex];
+            const cf_question_1_text = cf_question_1_option ? cf_question_1_option.text : '';
+
+            const cf_question_6_2_option = cf_question_6_2_select.options[cf_question_6_2_select.selectedIndex];
+            const cf_question_6_2_text = cf_question_6_2_option ? cf_question_6_2_option.text : '';
+
+            const cf_question_7_option = cf_question_7.options[cf_question_7.selectedIndex];
+            const cf_question_7_text = cf_question_7_option ? cf_question_7_option.text : '';
+
+            const cf_question_8_option = cf_question_8.options[cf_question_8.selectedIndex];
+            const cf_question_8_text = cf_question_8_option ? cf_question_8_option.text : '';
+
+            const cf_question_9_option = cf_question_9.options[cf_question_9.selectedIndex];
+            const cf_question_9_text = cf_question_9_option ? cf_question_9_option.text : '';
+
+            const cf_question_11_option = cf_question_11.options[cf_question_11.selectedIndex];
+            const cf_question_11_text = cf_question_11_option ? cf_question_11_option.text : '';
+
+            const cf_question_10_1 = question10_1.value;
+            const cf_question_10_2 = question10_2.value;
+            const cf_question_10_3 = question10_3.value;
+            const cf_question_10_4 = question10_4.value;
+
+            // initialize
+            const value_1 = parseFloat(question1.value) || 0;
+            const value_2_square_metre = parseFloat(question2_square_metre.value) || 0;
+            const value_3 = parseFloat(question3.value) || 0;
+            const value_4 = parseFloat(question4.value) || 0;
+            const value_4_final = question4Update(value_4);
+            const value_5_1 = 4000 * parseFloat(question5_1.value) || 0;
+            const value_5_2 = 2200 * parseFloat(question5_2.value) || 0;
+            const value_6_1 = 270 * parseFloat(question6_1.value) || 0;
+            const value_6_2 = parseFloat(question6_2.value) || 0;
+            const value_6_2_final = question6Update(value_6_2, value_2_square_metre);
+            const value_7 = parseFloat(question7.value) || 0;
+            const value_7_final = question7Update(value_7, value_2_square_metre);
+            const value_8_1 = parseFloat(question8_1.value) || 0;
+            const value_8_2 = parseFloat(question8_2.value) || 0;
+            const value_8_final = question8_Update(value_8_1, value_8_2);
+            const value_9 = parseFloat(question9.value) || 0;
+            const value_9_final = question9_Update(value_9, value_2_square_metre);
+            const value_10_1 = 550 * parseFloat(question10_1.value) || 0;
+            const value_10_2 = 280 * parseFloat(question10_2.value) || 0;
+            const value_10_3 = 480 * parseFloat(question10_3.value) || 0;
+            const value_10_4 = 1050 * parseFloat(question10_4.value) || 0;
+
+            const value_11 = parseFloat(question11.value) || 0;
+            const value_11_final = question11_Update(value_11, value_2_square_metre);
+
+            const total =
+                value_4_final +
+                value_5_1 +
+                value_5_2 +
+                value_6_1 +
+                value_6_2_final +
+                value_7_final +
+                value_8_final +
+                value_9_final +
+                value_10_1 +
+                value_10_2 +
+                value_10_3 +
+                value_10_4 +
+                value_11_final;
+
+            const total2 = value_1 * total; //Total cost calculation
+            totalCost.value = total2.toFixed(2); // Total cost to decimal
+
+            const value_hiddenTotal = parseFloat(totalCost.value) || 0;
+            document.getElementById('form-total-cost').value = parseFloat(totalCost.value);
+            document.getElementById('form-question-1').value = cf_question_1_text;
+            document.getElementById('form-question-2').value = value_2_square_metre;
+            document.getElementById('form-question-3').value = value_3;
+
+            if (value_4_final == "0") {
+                document.getElementById('form-question-4').value = "Όχι";
+            } else {
+                document.getElementById('form-question-4').value = value_4;
+            }
+            if (cf_question_5.checked) {
+                document.getElementById('form-question-5').value = "Ναι";
+                document.getElementById('form-question-5-1').value = "Mπάνια: " + question5_1.value;
+                document.getElementById('form-question-5-2').value = "WC: " + question5_2.value;
+            } else {
+                document.getElementById('form-question-5').value = "Όχι";
+                document.getElementById('form-question-5-1').value = "Mπάνια: Όχι";
+                document.getElementById('form-question-5-2').value = "WC: Όχι";
+            }
+            if (cf_question_6_checkbox_1.checked) {
+                document.getElementById('form-question-6').value = "Ναι";
+                document.getElementById('form-question-6-1').value = "Τοίχους: " + question6_1.value;
+            } else {
+                document.getElementById('form-question-6').value = "Όχι";
+                document.getElementById('form-question-6-1').value = "Τοίχους: Όχι";
+            }
+            if (cf_question_6_checkbox_2.checked) {
+                document.getElementById('form-question-6-2').value = "";
+                document.getElementById('form-question-6-2-1').value = "Ψευδοροφή: " + cf_question_6_2_text;
+            } else {
+                document.getElementById('form-question-6-2').value = "Ψευδοροφή: Όχι";
+                document.getElementById('form-question-6-2-1').value = "";
+            }
+            document.getElementById('form-question-7').value = cf_question_7_text;
+            document.getElementById('form-question-8').value = cf_question_8_text;
+            if (question8_2.value == "0") {
+                document.getElementById('form-question-8-1').value = "";
+            } else {
+                document.getElementById('form-question-8-1').value = ", Τρέχοντα Μέτρα: " + question8_2.value;
+            }
+
+            document.getElementById('form-question-9').value = cf_question_9_text;
+
+            document.getElementById('form-question-10_1').value = "Πόρτες Ασφαλείας: " + cf_question_10_1;
+            document.getElementById('form-question-10_2').value = "Εσωτερικές Πόρτες: " + cf_question_10_2;
+            document.getElementById('form-question-10_3').value = "Παράθυρα Αλουμινίου: " + cf_question_10_3;
+            document.getElementById('form-question-10_4').value = "Μπαλκονόπορτες Αλουμινίου: " + cf_question_10_4;
+
+            document.getElementById('form-question-11').value = cf_question_11_text;
+
+            // Debug console log
+            // uncomment to view logs
+            // Copy to function.php for debug logs
+            /*
+            console.log(
+                "Total: ",
+                totalCost.value + "\n",
+                "Q1: ",
+                value_1 + "\n",
+                "Q2: ",
+                value_2_square_metre + "\n",
+                "Q3: ",
+                value_3 + "\n",
+                "Q4: ",
+                value_4_final + "\n",
+                "Q5_1: ",
+                value_5_1 + "\n",
+                "Q5_2: ",
+                value_5_2 + "\n",
+                "Q6_1: ",
+                value_6_1 + "\n",
+                "Q6_2: ",
+                value_6_2_final + "\n",
+                "Q7: ",
+                value_7_final + "\n",
+                "Q8: ",
+                value_8_final + "\n",
+                "Q9: ",
+                value_9_final + "\n",
+                "Q10_1: ",
+                value_10_1 + "\n",
+                "Q10_2: ",
+                value_10_2 + "\n",
+                "Q10_3: ",
+                value_10_3 + "\n",
+                "Q10_4: ",
+                value_10_4 + "\n",
+                "Q11: ",
+                value_11_final + "\n"
+            );
+            */
+        }
+
+        question1.addEventListener("input", updateTotalCost);
+        question2_square_metre.addEventListener("input", updateTotalCost);
+        question3.addEventListener("input", updateTotalCost);
+        question4.addEventListener("input", updateTotalCost);
+        question5_1.addEventListener("input", updateTotalCost);
+        question5_2.addEventListener("input", updateTotalCost);
+        question6_1.addEventListener("input", updateTotalCost);
+        question6_2.addEventListener("input", updateTotalCost);
+        question7.addEventListener("input", updateTotalCost);
+        question8_1.addEventListener("input", updateTotalCost);
+        question8_2.addEventListener("input", updateTotalCost);
+        question9.addEventListener("input", updateTotalCost);
+        question10_1.addEventListener("input", updateTotalCost);
+        question10_2.addEventListener("input", updateTotalCost);
+        question10_3.addEventListener("input", updateTotalCost);
+        question10_4.addEventListener("input", updateTotalCost);
+        question11.addEventListener("input", updateTotalCost);
+
+
+        /**
+         * check conditions code
+         */
+
+        // Question 1
+        const question_1_logic = document.getElementById("question1Value");
+        const nextButton_1 = document.getElementById("next1");
+        question_1_logic.addEventListener("change", function () {
+            if (question_1_logic.value !== "0") {
+                nextButton_1.disabled = false;
+            } else {
+                nextButton_1.disabled = true;
+            }
+        });
+
+        // Question 2
+        const question_2_logic = document.getElementById("question2");
+        const nextButton_2 = document.getElementById("next2");
+
+        question_2_logic.addEventListener("input", function () {
+            if (question_2_logic.value > 0) {
+                nextButton_2.disabled = false;
+            } else {
+                nextButton_2.disabled = true;
+            }
+        });
+
+        // Question 4
+        const noOption_logic_4 = document.getElementById("question4-noOption");
+        const yesOption_logic_4 = document.getElementById("question4-yesOption");
+        const wallsInput_logic_4 = document.getElementById("question4-walls-input");
+        const wallsInputDiv_logic_4 = document.getElementById("question4-walls");
+        const nextButton_4 = document.getElementById("next4");
+
+        // Function to check the conditions and enable/disable the next button
+        function checkConditions_4() {
+            if (noOption_logic_4.checked) {
+                wallsInput_logic_4.value = 0;
+                nextButton_4.disabled = false;
+                updateTotalCost();
+            } else if (yesOption_logic_4.checked) {
+                if (wallsInput_logic_4.value >= 1 && wallsInput_logic_4.value <= 10) {
+                    nextButton_4.disabled = false;
+                } else {
+                    nextButton_4.disabled = true;
+                }
+            }
+
+        }
+
+        // Event listeners for the radio buttons
+        noOption_logic_4.addEventListener("change", function () {
+            checkConditions_4();
+        });
+
+        yesOption_logic_4.addEventListener("change", function () {
+            checkConditions_4();
+        });
+
+        // Event listener for the input field
+        wallsInput_logic_4.addEventListener("input", checkConditions_4);
+
+        // Initial check on page load
+        checkConditions_4();
+
+        // Question 5
+        const noOption_logic_5 = document.getElementById("question5-noOption");
+        const yesOption_logic_5 = document.getElementById("question5-yesOption");
+        const bathroomInput_logic_5 = document.getElementById("question5-bathroom-input");
+        const wcInput_logic_5 = document.getElementById("question5-wc-input");
+        const nextButton_logic_5 = document.getElementById("next5");
+
+        const bathroomDiv_logic_5 = document.getElementById("question5-bathroom");
+        const wcDiv_logic_5 = document.getElementById("question5-wc");
+
+        // Function to check conditions for question 5
+        function checkConditions_5() {
+            if (noOption_logic_5.checked) {
+                // Set both input values to 0
+                bathroomInput_logic_5.value = 0;
+                wcInput_logic_5.value = 0;
+
+
+                // Enable the next button
+                nextButton_logic_5.disabled = false;
+
+                // Update the total cost
+                updateTotalCost();
+            } else if (yesOption_logic_5.checked) {
+
+                // Enable the next button only if both input values are valid
+                const isBathroomValid = bathroomInput_logic_5.value >= 0 && bathroomInput_logic_5.value <= 4;
+                const isWcValid = wcInput_logic_5.value >= 0 && wcInput_logic_5.value <= 4;
+
+                if (isBathroomValid && isWcValid) {
+                    nextButton_logic_5.disabled = false;
+                } else {
+                    nextButton_logic_5.disabled = true;
+                }
+            }
+        }
+
+        // Event listeners for question 5
+        noOption_logic_5.addEventListener("change", checkConditions_5);
+        yesOption_logic_5.addEventListener("change", checkConditions_5);
+
+        // Event listeners for input fields
+        bathroomInput_logic_5.addEventListener("input", checkConditions_5);
+        wcInput_logic_5.addEventListener("input", checkConditions_5);
+
+        // Initial check on page load
+        checkConditions_5();
+
+        //Question 6
+        // Initialize values
+        const nextButton_logic_6 = document.getElementById("next6");
+        const option1_logic_6 = document.getElementById("question6-option1");
+        const option2_logic_6 = document.getElementById("question6-option2");
+        const inputField1_logic_6 = document.getElementById("question6-inputField1");
+        const inputField2_logic_6 = document.getElementById("question6-inputField2");
+        const input1_logic_6 = document.getElementById("question6-input1");
+        const selectValue_logic_6 = document.getElementById("question6Value");
+
+        function checkConditions_6() {
+            let isValid_6 = true;
+
+            if (option1_logic_6.checked) {
+                // Check if input1 is valid
+                if (input1_logic_6.value < 1 || input1_logic_6.value > 10) {
+                    isValid_6 = false;
+                }
+            }
+
+            if (option2_logic_6.checked) {
+                // Check if select value is 0
+                if (selectValue_logic_6.value == "0") {
+                    isValid_6 = false;
+                }
+            }
+
+            nextButton_logic_6.disabled = !isValid_6;
+        }
+
+        // Event listeners for checkboxes
+        option1_logic_6.addEventListener("change", function () {
+            if (option1_logic_6.checked) {
+
+            } else {
+
+                input1_logic_6.value = 0;
+                updateTotalCost();
+            }
+            checkConditions_6();
+        });
+
+        option2_logic_6.addEventListener("change", function () {
+            if (option2_logic_6.checked) {
+
+            } else {
+
+                selectValue_logic_6.value = "0";
+                updateTotalCost();
+            }
+            checkConditions_6();
+        });
+
+        // Event listeners for inputs
+        input1_logic_6.addEventListener("input", checkConditions_6);
+        selectValue_logic_6.addEventListener("change", checkConditions_6);
+
+        // Initial check on page load
+        checkConditions_6();
+
+
+        //Question 8 
+        // Initialize values
+        const question8Value_logic = document.getElementById("question8Value");
+        const question8Input_logic = document.getElementById("question8-input");
+        const question8CurrentMeasures_logic = document.getElementById("question8-current-measures");
+        const nextButton_logic_8 = document.getElementById("next8");
+
+        function checkConditions_8() {
+            let isValid_8 = true;
+
+            if (question8Value_logic.value === "0") {
+                // If "Όχι" is selected
+                nextButton_logic_8.disabled = false;
+                question8CurrentMeasures_logic.value = 0;
+                updateTotalCost();
+
+            } else {
+                // If other options are selected
+                if (question8CurrentMeasures_logic.value < 1 || question8CurrentMeasures_logic.value > 100) {
+                    isValid_8 = false;
+                }
+                nextButton_logic_8.disabled = !isValid_8;
+            }
+        }
+
+        // Event listeners
+        question8Value_logic.addEventListener("change", checkConditions_8);
+        question8CurrentMeasures_logic.addEventListener("input", checkConditions_8);
+
+        // Initial check on page load
+        checkConditions_8();
+
+    });
+
+    function question4Update(value_4) {
+        switch (value_4) {
+            case 1:
+                return 300;
+            case 2:
+                return 400;
+            case 3:
+                return 650;
+            case 4:
+                return 800;
+            case 5:
+                return 1050;
+            case 6:
+                return 1150;
+            case 7:
+                return 1400;
+            case 8:
+                return 1550;
+            case 9:
+                return 1800;
+            case 10:
+                return 2000;
+            default:
+                return 0;
+        }
+    }
+
+    function question6Update(value_6_2, value_2_square_metre) {
+        switch (value_6_2) {
+            case 22:
+                return 22 * value_2_square_metre;
+            case 200:
+                return 200;
+            default:
+                return 0;
+        }
+    }
+
+    function question7Update(value_7, value_2_square_metre) {
+        switch (value_7) {
+            case 150:
+                return 150;
+            case 50:
+                return 50 * value_2_square_metre;
+            case 15:
+                return 15 * value_2_square_metre;
+            default:
+                return 150;
+        }
+    }
+
+    function question8_Update(value_8_1, value_8_2) {
+        if (value_8_1 == 1) {
+            if (value_8_2 <= 7) {
+                return 3500;
+            } else {
+                return 3500 + (value_8_2 - 7) * 300;
+            }
+        } else if (value_8_1 == 2) {
+            return value_8_2 * 350;
+        } else {
+            return 0;
+        }
+    }
+
+    function question9_Update(value_9, value_2_square_metre) {
+        switch (value_9) {
+            case 1:
+                return value_2_square_metre * 50;
+            case 2:
+                return value_2_square_metre * 13;
+            case 3:
+                return value_2_square_metre * (3 / 4) * 50 + 400;
+            default:
+                return 0;
+        }
+    }
+
+    function question11_Update(value_11, value_2_square_metre) {
+        switch (value_11) {
+            case 1:
+                return value_2_square_metre * 2.5 * 7;
+            case 2:
+                return value_2_square_metre * 2.5 * 7 + 200;
+            default:
+                return 0;
+        }
+    }
+
+</script>
