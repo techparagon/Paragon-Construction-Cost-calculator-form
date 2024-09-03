@@ -1,0 +1,71 @@
+/** Cost calculator form **/
+
+/*we hide the form on page load so we can display it using js on final step from the functions.php code*/
+#contact-form-cost-calculator{
+	/*display:none;*/
+}
+
+.page-id-6188 div.wpcf7 input:not([type="checkbox"]),
+.page-id-5587 div.wpcf7 textarea {
+	width: 100%;
+}
+
+.page-id-6188 div.wpcf7 label {
+	display: block;
+	font-size:16px !important;
+	opacity:unset !important;
+}
+
+
+.page-id-6188 div.wpcf7{
+	max-width: 650px !important;
+	background-color: #FFCF01 !important;
+	padding: 25px !important;
+	border-radius: 5px !important;
+	color: #000 !important;
+	margin: auto !important;
+	/*
+	margin-top: 3em !important;
+	margin-bottom: 3em !important;
+	*/
+	display:none;
+}
+
+.page-id-6188 input.wpcf7-form-control.has-spinner.wpcf7-submit{
+	background-color:red !important;
+}
+
+.page-id-6188 div.wpcf7 input{
+	background:#fff !important;
+}
+
+.page-id-6188 span.wpcf7-not-valid-tip{
+	color: #ff0000 !important;
+}
+
+@media only screen and (max-width: 768px) {
+	.page-id-6188 div.wpcf7{
+		padding: 30px 15px 30px 15px !important;
+	}
+
+	.page-id-6188 .bt_bb_row .bt_bb_column{
+		padding-left:0px !important;
+		padding-right:0px !important;
+	}
+}
+
+.page-id-6188 input.wpcf7-form-control.has-spinner.wpcf7-submit{
+	margin-top: 1em !important;
+}
+
+.page-id-6188 .btPageHeadline{
+	display:none !important;
+}
+
+.page-id-6188 .btContent{
+	padding-top:3em !important;
+	padding-bottom:3em !important;
+	background-color: #DFD5C8 !important
+}
+
+/** Cost calculator form end **/
